@@ -14,7 +14,8 @@ import {
   Plus,
   Trash2,
   Globe,
-  Settings,
+  MessageSquare,
+  Smartphone,
 } from "lucide-react";
 import MonogramBadge from "@/components/ui/MonogramBadge";
 import FloralDivider from "@/components/ui/FloralDivider";
@@ -48,6 +49,22 @@ export default function InviteGeneratorPage() {
   const singleUrl = cleanSingleName
     ? `${cleanBase}/?invite=${encodeURIComponent(cleanSingleName)}`
     : `${cleanBase}/?invite=Guest`;
+
+  const getFullInvitationMessage = (name: string, url: string) => {
+    return (
+      `✨ *WEDDING INVITATION* ✨\n\n` +
+      `Dearest *${name}*,\n\n` +
+      `Together with our families, we cordially invite you to celebrate our wedding!\n\n` +
+      `💍 *Aravindh & Karthiga*\n\n` +
+      `📅 *Engagement Ceremony:*\n` +
+      `Saturday, 14th November 2026 • 7:00 PM onwards\n\n` +
+      `💒 *Muhurtham (Wedding):*\n` +
+      `Sunday, 15th November 2026 • 8:00 AM – 9:15 AM\n\n` +
+      `📍 *Venue:*\n` +
+      `Aaryan Thirumana Mahal, Madurai\n\n` +
+      `${url}`
+    );
+  };
 
   const handleCopy = (text: string, id: string) => {
     if (!text) return;
@@ -103,7 +120,7 @@ export default function InviteGeneratorPage() {
   };
 
   const getWhatsAppShareUrl = (name: string, url: string) => {
-    const message = `Vanakkam! ✨\n\nTogether with our families, we cordially invite you, *${name}*, to celebrate our wedding!\n\n👰🤵 Aravindh & Karthiga\n📅 14 & 15 November 2026\n📍 Aaryan Thirumana Mahal, Madurai\n\nTap to open your personalized invitation card:\n${url}`;
+    const message = getFullInvitationMessage(name, url);
     return `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
   };
 
@@ -220,9 +237,9 @@ export default function InviteGeneratorPage() {
                 </button>
               </div>
 
-              {/* Instant Live Link Box for Single Guest */}
+              {/* Instant Live Link & WhatsApp Box for Single Guest */}
               {cleanSingleName && (
-                <div className="mt-4 p-4 rounded-2xl bg-sand-50/70 border border-champagne-300/80 space-y-3">
+                <div className="mt-4 p-5 rounded-2xl bg-sand-50/70 border border-champagne-300/80 space-y-4">
                   <div className="flex items-center justify-between text-xs font-serif">
                     <span className="text-champagne-700 font-medium">
                       Generated Live Link for <strong className="text-editorial">"{cleanSingleName}"</strong>:
@@ -242,34 +259,88 @@ export default function InviteGeneratorPage() {
                     {singleUrl}
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(singleUrl, "single-copy")}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-editorial hover:bg-black text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
-                    >
-                      {copiedId === "single-copy" ? (
-                        <>
-                          <Check className="w-4 h-4 text-emerald-400" />
-                          <span>Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4 text-champagne-300" />
-                          <span>Copy Link</span>
-                        </>
-                      )}
-                    </button>
-
+                  {/* Primary Sharing Action Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                    {/* 1. Share on WhatsApp Button */}
                     <a
                       href={getWhatsAppShareUrl(cleanSingleName, singleUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
+                      className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
                     >
                       <Share2 className="w-4 h-4" />
-                      <span>Share on WhatsApp</span>
+                      <span>Send via WhatsApp</span>
                     </a>
+
+                    {/* 2. Copy Full Invitation Message */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleCopy(
+                          getFullInvitationMessage(cleanSingleName, singleUrl),
+                          "copy-message"
+                        )
+                      }
+                      className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-editorial hover:bg-black text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
+                    >
+                      {copiedId === "copy-message" ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-400" />
+                          <span>Message Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <MessageSquare className="w-4 h-4 text-champagne-300" />
+                          <span>Copy Message & Link</span>
+                        </>
+                      )}
+                    </button>
+
+                    {/* 3. Copy Link Only */}
+                    <button
+                      type="button"
+                      onClick={() => handleCopy(singleUrl, "single-copy")}
+                      className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white hover:bg-champagne-100 text-editorial border border-champagne-300 text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
+                    >
+                      {copiedId === "single-copy" ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-600" />
+                          <span>Link Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4 text-champagne-600" />
+                          <span>Copy Link Only</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* WhatsApp Message Preview Bubble */}
+                  <div className="mt-4 pt-3 border-t border-champagne-200/70">
+                    <span className="text-[11px] font-serif uppercase tracking-editorial text-champagne-700 font-semibold block mb-2">
+                      WhatsApp Message Preview:
+                    </span>
+                    <div className="p-3.5 rounded-2xl bg-[#E7F6EC] border border-[#25D366]/30 text-xs font-sans text-[#111B21] space-y-2 max-w-md shadow-sm">
+                      <div className="p-2.5 rounded-xl bg-white/90 border border-emerald-200/60 shadow-xs space-y-1">
+                        <div className="w-full aspect-[2/1] rounded-lg overflow-hidden bg-champagne-100 relative">
+                          <img
+                            src={`${cleanBase}/og-image.jpg`}
+                            alt="Invitation Preview Card"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <p className="font-semibold text-xs text-gray-900 pt-1">
+                          Aravindh & Karthiga — Wedding Invitation
+                        </p>
+                        <p className="text-[10px] text-gray-500 truncate">
+                          Save the Date: 14 & 15 November 2026 • Madurai
+                        </p>
+                      </div>
+                      <p className="text-xs whitespace-pre-line leading-relaxed font-sans text-gray-800">
+                        {getFullInvitationMessage(cleanSingleName, singleUrl)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -363,22 +434,40 @@ export default function InviteGeneratorPage() {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    {/* Copy Link */}
+                    {/* Copy Full Message */}
                     <button
-                      onClick={() => handleCopy(item.url, item.id)}
-                      className="py-2 px-3 rounded-xl bg-white hover:bg-champagne-100 text-editorial border border-champagne-300 text-xs font-serif flex items-center gap-1.5 transition-colors"
-                      title="Copy Link"
+                      onClick={() =>
+                        handleCopy(
+                          getFullInvitationMessage(item.name, item.url),
+                          `msg-${item.id}`
+                        )
+                      }
+                      className="py-2 px-3 rounded-xl bg-editorial hover:bg-black text-white text-xs font-serif flex items-center gap-1.5 transition-colors shadow-xs"
+                      title="Copy WhatsApp Message & Link"
                     >
-                      {copiedId === item.id ? (
+                      {copiedId === `msg-${item.id}` ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          <span className="text-emerald-700 font-semibold">Copied</span>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Copied</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3.5 h-3.5 text-champagne-600" />
-                          <span>Copy</span>
+                          <MessageSquare className="w-3.5 h-3.5 text-champagne-300" />
+                          <span>Copy Message</span>
                         </>
+                      )}
+                    </button>
+
+                    {/* Copy Link Only */}
+                    <button
+                      onClick={() => handleCopy(item.url, item.id)}
+                      className="py-2 px-3 rounded-xl bg-white hover:bg-champagne-100 text-editorial border border-champagne-300 text-xs font-serif flex items-center gap-1.5 transition-colors"
+                      title="Copy Link Only"
+                    >
+                      {copiedId === item.id ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5 text-champagne-600" />
                       )}
                     </button>
 
@@ -387,8 +476,8 @@ export default function InviteGeneratorPage() {
                       href={getWhatsAppShareUrl(item.name, item.url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-serif flex items-center gap-1.5 transition-colors"
-                      title="Share on WhatsApp"
+                      className="py-2 px-3 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-serif flex items-center gap-1.5 transition-colors shadow-xs"
+                      title="Share directly on WhatsApp"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       <span>WhatsApp</span>
@@ -424,10 +513,10 @@ export default function InviteGeneratorPage() {
         <div className="rounded-2xl bg-champagne-100/60 border border-champagne-300/60 p-4 sm:p-5 text-xs font-serif text-editorial-muted space-y-1.5">
           <p className="font-semibold text-champagne-800 flex items-center gap-1.5">
             <Sparkles className="w-4 h-4 text-champagne-600" />
-            <span>How Personalized Invitations Work:</span>
+            <span>WhatsApp Sharing Pro-Tip:</span>
           </p>
           <p>
-            When a guest opens their link (e.g. <code>https://surya6074.github.io/ak-wedding/?invite=Surya</code>), the royal sealed envelope will display their name, and the opening ceremony welcomes them warmly before playing the music!
+            When pasting the link in WhatsApp, wait <strong>1 to 2 seconds</strong> before hitting send. WhatsApp will automatically fetch and display the royal gold preview card and thumbnail!
           </p>
         </div>
       </div>

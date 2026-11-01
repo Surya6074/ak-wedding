@@ -82,8 +82,8 @@ export default function OpeningCard({ onOpen, guestName }: OpeningCardProps) {
           <div className="absolute bottom-4 right-4 w-10 h-10 border-b-2 border-r-2 border-champagne-400/60 rounded-br-lg pointer-events-none" />
 
           {/* Top Save the Date Header */}
-          <div className="relative z-10 pt-3 pb-1">
-            <h2 className="font-heading text-xl sm:text-2xl md:text-3xl uppercase tracking-[0.22em] text-champagne-700 font-medium">
+          <div className="relative z-10 pt-4 pb-2">
+            <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl uppercase tracking-[0.25em] text-champagne-800 font-semibold drop-shadow-sm">
               Save the Date
             </h2>
           </div>
