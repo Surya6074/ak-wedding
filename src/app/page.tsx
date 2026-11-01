@@ -11,6 +11,7 @@ import LocationSection from "@/components/location/LocationSection";
 import FooterSection from "@/components/footer/FooterSection";
 
 import FloatingPetals from "@/components/ui/FloatingPetals";
+import ParallaxBackground from "@/components/ui/ParallaxBackground";
 import CustomCursor from "@/components/ui/CustomCursor";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import AudioPlayer from "@/components/ui/AudioPlayer";
@@ -105,6 +106,9 @@ export default function WeddingPage() {
           guestName={guestName}
         />
       )}
+
+      {/* Multi-layered Scroll Parallax Background (Top to Bottom) */}
+      <ParallaxBackground />
 
       {/* 60fps Ambient Floating Petals & Gold Sparkles */}
       <FloatingPetals />

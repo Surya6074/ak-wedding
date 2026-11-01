@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { weddingData } from "@/data/weddingData";
 import { Clock, Sparkles } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
@@ -15,6 +15,7 @@ interface TimeRemaining {
 }
 
 export default function CountdownSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [timeLeft, setTimeLeft] = useState<TimeRemaining>({
     days: 0,
     hours: 0,
@@ -23,6 +24,16 @@ export default function CountdownSection() {
     isWeddingDay: false,
   });
   const [mounted, setMounted] = useState(false);
+
+  // Parallax scroll tracking
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const headerY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const cardsY = useTransform(scrollYProgress, [0, 1], [40, -25]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [0.85, 1.15]);
 
   useEffect(() => {
     setMounted(true);
@@ -68,12 +79,20 @@ export default function CountdownSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="countdown"
       className="relative py-24 sm:py-32 px-4 bg-sand-50/60 overflow-hidden"
     >
+      {/* Parallax Background Aura */}
+      <motion.div
+        style={{ scale: bgScale }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-champagne-200/30 blur-3xl pointer-events-none select-none"
+      />
+
       <div className="max-w-5xl mx-auto text-center relative z-10">
-        {/* Section Header */}
+        {/* Section Header with Parallax Float */}
         <motion.div
+          style={{ y: headerY }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -112,8 +131,11 @@ export default function CountdownSection() {
             </p>
           </motion.div>
         ) : (
-          /* Live Countdown Cards */
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto">
+          /* Live Countdown Cards with Staggered Parallax Float */
+          <motion.div
+            style={{ y: cardsY }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto"
+          >
             {timeUnits.map((unit, idx) => (
               <motion.div
                 key={unit.label}
@@ -143,7 +165,7 @@ export default function CountdownSection() {
                 </span>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

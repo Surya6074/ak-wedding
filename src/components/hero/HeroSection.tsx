@@ -17,9 +17,11 @@ export default function HeroSection() {
     offset: ["start start", "end start"],
   });
 
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const lampsY = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "45%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const mandalaRotate = useTransform(scrollYProgress, [0, 1], [0, 60]);
+  const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
   // Read ?invite="Name" or ?invite=Name from URL query params
   useEffect(() => {
@@ -29,7 +31,6 @@ export default function HeroSection() {
       const rawParam = params.get("invite") || params.get("guest") || params.get("to");
       if (rawParam) {
         const decoded = decodeURIComponent(rawParam);
-        // Clean surrounding quotes e.g. ?invite="Surya" -> Surya
         const cleaned = decoded.replace(/^["']|["']$/g, "").trim();
         if (cleaned) {
           const capitalized = cleaned
@@ -60,6 +61,37 @@ export default function HeroSection() {
         <div className="absolute top-1/4 w-[400px] h-[400px] rounded-full bg-champagne-100/50 blur-2xl" />
       </motion.div>
 
+      {/* Parallax Hanging Traditional Brass Lamps (Top Corners) */}
+      <motion.div
+        style={{ y: lampsY }}
+        className="absolute top-0 left-4 sm:left-12 pointer-events-none z-20 origin-top hidden xs:block"
+      >
+        <svg width="44" height="130" viewBox="0 0 44 130" fill="none" className="text-[#C5A059] opacity-80">
+          <line x1="22" y1="0" x2="22" y2="70" stroke="currentColor" strokeWidth="1" />
+          <circle cx="22" cy="72" r="3" fill="currentColor" />
+          <path d="M12 80 C12 74 32 74 32 80 L36 94 C36 100 8 100 8 94 Z" fill="currentColor" fillOpacity="0.75" />
+          <path d="M14 98 C14 106 30 106 30 98 Z" fill="currentColor" />
+          {/* Flame Glow */}
+          <ellipse cx="22" cy="68" rx="3.5" ry="7" fill="#E6A817" />
+          <ellipse cx="22" cy="68" rx="1.5" ry="3.5" fill="#FFF5D6" />
+        </svg>
+      </motion.div>
+
+      <motion.div
+        style={{ y: lampsY }}
+        className="absolute top-0 right-4 sm:right-12 pointer-events-none z-20 origin-top hidden xs:block"
+      >
+        <svg width="44" height="130" viewBox="0 0 44 130" fill="none" className="text-[#C5A059] opacity-80">
+          <line x1="22" y1="0" x2="22" y2="70" stroke="currentColor" strokeWidth="1" />
+          <circle cx="22" cy="72" r="3" fill="currentColor" />
+          <path d="M12 80 C12 74 32 74 32 80 L36 94 C36 100 8 100 8 94 Z" fill="currentColor" fillOpacity="0.75" />
+          <path d="M14 98 C14 106 30 106 30 98 Z" fill="currentColor" />
+          {/* Flame Glow */}
+          <ellipse cx="22" cy="68" rx="3.5" ry="7" fill="#E6A817" />
+          <ellipse cx="22" cy="68" rx="1.5" ry="3.5" fill="#FFF5D6" />
+        </svg>
+      </motion.div>
+
       {/* Decorative Corner Borders */}
       <div className="absolute top-8 left-8 w-16 h-16 border-t border-l border-champagne-400/40 pointer-events-none rounded-tl-xl hidden sm:block" />
       <div className="absolute top-8 right-8 w-16 h-16 border-t border-r border-champagne-400/40 pointer-events-none rounded-tr-xl hidden sm:block" />
@@ -83,7 +115,7 @@ export default function HeroSection() {
               </span>
               <Sparkles className="w-3.5 h-3.5 text-champagne-500 animate-pulse" />
             </div>
-            <h2 className="font-heading text-2xl sm:text-3xl text-editorial font-medium">
+            <h2 className="font-heading text-2xl sm:text-3xl text-editorial font-medium capitalize">
               Welcome, {guestName}!
             </h2>
             <p className="font-serif italic text-xs text-editorial-muted mt-0.5">
@@ -106,6 +138,30 @@ export default function HeroSection() {
         style={{ y: textY, opacity }}
         className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto py-4 sm:py-6"
       >
+        {/* Parallax Rotating Golden Mandala Backdrop */}
+        <motion.div
+          style={{ rotate: mandalaRotate }}
+          className="absolute -z-10 w-80 h-80 sm:w-96 sm:h-96 opacity-15 pointer-events-none select-none"
+        >
+          <svg viewBox="0 0 200 200" fill="none" className="w-full h-full text-[#C5A059]">
+            <circle cx="100" cy="100" r="95" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx="100" cy="100" r="75" stroke="currentColor" strokeWidth="0.8" />
+            <circle cx="100" cy="100" r="50" stroke="currentColor" strokeWidth="1" strokeDasharray="2 4" />
+            {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
+              <line
+                key={deg}
+                x1="100"
+                y1="25"
+                x2="100"
+                y2="175"
+                stroke="currentColor"
+                strokeWidth="0.6"
+                transform={`rotate(${deg} 100 100)`}
+              />
+            ))}
+          </svg>
+        </motion.div>
+
         {/* Intro Subline / Personalized Greeting */}
         {guestName ? (
           <motion.div
@@ -116,7 +172,7 @@ export default function HeroSection() {
           >
             <p className="font-serif italic text-sm sm:text-base text-champagne-700 leading-relaxed">
               Together with our families, we cordially invite you,{" "}
-              <span className="font-serif font-bold text-editorial underline decoration-champagne-400 decoration-2 underline-offset-4">
+              <span className="font-serif font-bold text-editorial underline decoration-champagne-400 decoration-2 underline-offset-4 capitalize">
                 {guestName}
               </span>
               , to celebrate the wedding of

@@ -81,14 +81,11 @@ export default function OpeningCard({ onOpen, guestName }: OpeningCardProps) {
           <div className="absolute bottom-4 left-4 w-10 h-10 border-b-2 border-l-2 border-champagne-400/60 rounded-bl-lg pointer-events-none" />
           <div className="absolute bottom-4 right-4 w-10 h-10 border-b-2 border-r-2 border-champagne-400/60 rounded-br-lg pointer-events-none" />
 
-          {/* Top Traditional Blessing Header */}
-          <div className="relative z-10 space-y-2 pt-2">
-            <div className="inline-flex items-center gap-1.5 text-champagne-700 font-serif text-[11px] sm:text-xs uppercase tracking-editorial font-semibold">
-              <span>॥ ஸ்ரீ கணேசாய நமஹ ॥</span>
-            </div>
-            <p className="text-xs font-serif uppercase tracking-editorial text-champagne-600 font-medium">
+          {/* Top Save the Date Header */}
+          <div className="relative z-10 pt-3 pb-1">
+            <h2 className="font-heading text-xl sm:text-2xl md:text-3xl uppercase tracking-[0.22em] text-champagne-700 font-medium">
               Save the Date
-            </p>
+            </h2>
           </div>
 
           {/* Center Personalized Wax Seal / Monogram Medallion */}

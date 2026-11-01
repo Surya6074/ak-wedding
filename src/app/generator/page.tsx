@@ -13,7 +13,8 @@ import {
   ArrowLeft,
   Plus,
   Trash2,
-  FileText,
+  Globe,
+  Settings,
 } from "lucide-react";
 import MonogramBadge from "@/components/ui/MonogramBadge";
 import FloralDivider from "@/components/ui/FloralDivider";
@@ -24,19 +25,16 @@ interface GeneratedItem {
   url: string;
 }
 
+const DEFAULT_LIVE_DOMAIN = "https://surya6074.github.io/ak-wedding";
+
 export default function InviteGeneratorPage() {
   const [guestName, setGuestName] = useState("");
   const [bulkInput, setBulkInput] = useState("");
   const [isBulkMode, setIsBulkMode] = useState(false);
-  const [origin, setOrigin] = useState("");
+  const [baseUrl, setBaseUrl] = useState(DEFAULT_LIVE_DOMAIN);
+  const [isEditingBase, setIsEditingBase] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [linksList, setLinksList] = useState<GeneratedItem[]>([]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setOrigin(window.location.origin);
-    }
-  }, []);
 
   const formatCapitalized = (str: string) => {
     return str
@@ -45,10 +43,11 @@ export default function InviteGeneratorPage() {
       .join(" ");
   };
 
+  const cleanBase = baseUrl.replace(/\/+$/, "");
   const cleanSingleName = formatCapitalized(guestName.trim());
   const singleUrl = cleanSingleName
-    ? `${origin}/?invite=${encodeURIComponent(cleanSingleName)}`
-    : origin ? `${origin}/?invite=Guest` : "";
+    ? `${cleanBase}/?invite=${encodeURIComponent(cleanSingleName)}`
+    : `${cleanBase}/?invite=Guest`;
 
   const handleCopy = (text: string, id: string) => {
     if (!text) return;
@@ -65,7 +64,7 @@ export default function InviteGeneratorPage() {
     const newItem: GeneratedItem = {
       id: Date.now().toString() + Math.random().toString(36).substring(2, 5),
       name: formattedName,
-      url: `${origin}/?invite=${encodeURIComponent(formattedName)}`,
+      url: `${cleanBase}/?invite=${encodeURIComponent(formattedName)}`,
     };
 
     setLinksList((prev) => [newItem, ...prev]);
@@ -83,7 +82,7 @@ export default function InviteGeneratorPage() {
     const newItems: GeneratedItem[] = names.map((name) => ({
       id: Date.now().toString() + Math.random().toString(36).substring(2, 5),
       name,
-      url: `${origin}/?invite=${encodeURIComponent(name)}`,
+      url: `${cleanBase}/?invite=${encodeURIComponent(name)}`,
     }));
 
     setLinksList((prev) => [...newItems, ...prev]);
@@ -139,6 +138,30 @@ export default function InviteGeneratorPage() {
             Create customized, personalized invitation links for your guests with their names on the card cover.
           </p>
           <FloralDivider variant="heart" className="my-4" />
+
+          {/* Live Domain Badge & Configuration */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-champagne-300/80 shadow-sm text-xs font-serif text-editorial-muted">
+            <Globe className="w-3.5 h-3.5 text-champagne-600 shrink-0" />
+            <span className="font-semibold text-editorial">Live Target:</span>
+            {!isEditingBase ? (
+              <span className="font-mono text-[11px] text-champagne-700 font-semibold truncate max-w-xs sm:max-w-md">
+                {cleanBase}
+              </span>
+            ) : (
+              <input
+                type="text"
+                value={baseUrl}
+                onChange={(e) => setBaseUrl(e.target.value)}
+                className="px-2 py-0.5 rounded border border-champagne-300 font-mono text-xs text-editorial w-64"
+              />
+            )}
+            <button
+              onClick={() => setIsEditingBase(!isEditingBase)}
+              className="text-[10px] uppercase font-bold text-champagne-600 hover:text-editorial underline ml-1"
+            >
+              {isEditingBase ? "Done" : "Change"}
+            </button>
+          </div>
         </div>
 
         {/* Mode Selector Tabs */}
@@ -202,7 +225,7 @@ export default function InviteGeneratorPage() {
                 <div className="mt-4 p-4 rounded-2xl bg-sand-50/70 border border-champagne-300/80 space-y-3">
                   <div className="flex items-center justify-between text-xs font-serif">
                     <span className="text-champagne-700 font-medium">
-                      Generated Link for <strong className="text-editorial">"{cleanSingleName}"</strong>:
+                      Generated Live Link for <strong className="text-editorial">"{cleanSingleName}"</strong>:
                     </span>
                     <a
                       href={singleUrl}
@@ -215,7 +238,7 @@ export default function InviteGeneratorPage() {
                     </a>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white border border-champagne-200 text-xs font-mono text-editorial break-all select-all">
+                  <div className="p-3 rounded-xl bg-white border border-champagne-200 text-xs font-mono text-editorial break-all select-all font-semibold">
                     {singleUrl}
                   </div>
 
@@ -223,7 +246,7 @@ export default function InviteGeneratorPage() {
                     <button
                       type="button"
                       onClick={() => handleCopy(singleUrl, "single-copy")}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-editorial hover:bg-black text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all"
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-editorial hover:bg-black text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
                     >
                       {copiedId === "single-copy" ? (
                         <>
@@ -242,7 +265,7 @@ export default function InviteGeneratorPage() {
                       href={getWhatsAppShareUrl(cleanSingleName, singleUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all"
+                      className="flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-serif uppercase tracking-editorial font-semibold transition-all shadow-sm"
                     >
                       <Share2 className="w-4 h-4" />
                       <span>Share on WhatsApp</span>
@@ -267,7 +290,7 @@ export default function InviteGeneratorPage() {
                 value={bulkInput}
                 onChange={(e) => setBulkInput(e.target.value)}
                 placeholder="Names"
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-champagne-300 text-editorial placeholder:text-editorial-light/60 text-sm focus:outline-none focus:ring-2 focus:ring-champagne-400 font-serif"
+                className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-champagne-300 text-editorial placeholder:text-editorial-light/60 text-sm focus:outline-none focus:ring-2 focus:ring-champagne-400 font-serif capitalize"
               />
 
               <button
@@ -404,7 +427,7 @@ export default function InviteGeneratorPage() {
             <span>How Personalized Invitations Work:</span>
           </p>
           <p>
-            When a guest opens their link (e.g. <code>?invite=Name</code>), the royal sealed envelope will display their name, and the opening ceremony welcomes them warmly before playing the music!
+            When a guest opens their link (e.g. <code>https://surya6074.github.io/ak-wedding/?invite=Surya</code>), the royal sealed envelope will display their name, and the opening ceremony welcomes them warmly before playing the music!
           </p>
         </div>
       </div>

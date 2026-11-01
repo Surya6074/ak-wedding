@@ -1,16 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { galleryItems, GalleryItem, shuffleArray } from "@/data/galleryData";
 import GalleryLightbox from "./GalleryLightbox";
 import { Camera, ZoomIn, Sparkles } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
 
 export default function GallerySection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [shuffledItems, setShuffledItems] = useState<GalleryItem[]>(galleryItems);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [activeLightboxItem, setActiveLightboxItem] = useState<GalleryItem | null>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Editorial Parallax Column Speeds
+  const col1Y = useTransform(scrollYProgress, [0, 1], [25, -25]);
+  const col2Y = useTransform(scrollYProgress, [0, 1], [-20, 25]);
+  const col3Y = useTransform(scrollYProgress, [0, 1], [35, -35]);
 
   // Fisher-Yates shuffle algorithm on initial page load
   useEffect(() => {
@@ -41,6 +52,7 @@ export default function GallerySection() {
 
   return (
     <section
+      ref={sectionRef}
       id="gallery"
       className="relative py-28 sm:py-36 px-4 bg-editorial-grain overflow-hidden"
     >
@@ -82,58 +94,63 @@ export default function GallerySection() {
           </div>
         </motion.div>
 
-        {/* Dynamic Masonry-Style Editorial Gallery */}
+        {/* Dynamic Masonry-Style Editorial Gallery with Parallax Shifts */}
         <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-          {filteredItems.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.6, delay: idx * 0.08 }}
-              onClick={() => setActiveLightboxItem(item)}
-              className="break-inside-avoid group cursor-pointer rounded-3xl p-3 bg-white border border-champagne-300/40 shadow-card hover:shadow-floating transition-all duration-300"
-            >
-              {/* Frame Container */}
-              <div
-                className={`w-full ${item.heightClass} rounded-2xl bg-gradient-to-br ${item.gradient} border border-champagne-200/60 p-6 flex flex-col justify-between relative overflow-hidden transition-transform duration-500 group-hover:scale-[1.01]`}
+          {filteredItems.map((item, idx) => {
+            const parallaxY = idx % 3 === 0 ? col1Y : idx % 3 === 1 ? col2Y : col3Y;
+
+            return (
+              <motion.div
+                key={item.id}
+                style={{ y: parallaxY }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.6, delay: idx * 0.06 }}
+                onClick={() => setActiveLightboxItem(item)}
+                className="break-inside-avoid group cursor-pointer rounded-3xl p-3 bg-white border border-champagne-300/40 shadow-card hover:shadow-floating transition-all duration-300"
               >
-                {/* Top Badge */}
-                <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-serif uppercase tracking-widest px-2.5 py-1 rounded-full bg-white/70 backdrop-blur-sm text-champagne-700 font-semibold border border-white">
-                    {item.category}
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-champagne-600 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ZoomIn className="w-4 h-4" />
+                {/* Frame Container */}
+                <div
+                  className={`w-full ${item.heightClass} rounded-2xl bg-gradient-to-br ${item.gradient} border border-champagne-200/60 p-6 flex flex-col justify-between relative overflow-hidden transition-transform duration-500 group-hover:scale-[1.01]`}
+                >
+                  {/* Top Badge */}
+                  <div className="flex justify-between items-start">
+                    <span className="text-[10px] font-serif uppercase tracking-widest px-2.5 py-1 rounded-full bg-white/70 backdrop-blur-sm text-champagne-700 font-semibold border border-white">
+                      {item.category}
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-champagne-600 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ZoomIn className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Center Vignette */}
+                  <div className="text-center my-auto space-y-1">
+                    <span className="font-heading text-2xl sm:text-3xl text-editorial font-medium block">
+                      A & K
+                    </span>
+                    <span className="font-serif text-xs text-editorial-muted italic block">
+                      {item.title}
+                    </span>
+                  </div>
+
+                  {/* Bottom Caption Overlay */}
+                  <div className="rounded-xl bg-white/80 backdrop-blur-sm p-3 border border-white/80 space-y-0.5">
+                    <p className="font-heading text-sm text-editorial font-medium line-clamp-1">
+                      {item.title}
+                    </p>
+                    <p className="font-serif text-[11px] text-editorial-muted italic line-clamp-1">
+                      {item.caption}
+                    </p>
                   </div>
                 </div>
-
-                {/* Center Vignette */}
-                <div className="text-center my-auto space-y-1">
-                  <span className="font-heading text-2xl sm:text-3xl text-editorial font-medium block">
-                    A & K
-                  </span>
-                  <span className="font-serif text-xs text-editorial-muted italic block">
-                    {item.title}
-                  </span>
-                </div>
-
-                {/* Bottom Caption Overlay */}
-                <div className="rounded-xl bg-white/80 backdrop-blur-sm p-3 border border-white/80 space-y-0.5">
-                  <p className="font-heading text-sm text-editorial font-medium line-clamp-1">
-                    {item.title}
-                  </p>
-                  <p className="font-serif text-[11px] text-editorial-muted italic line-clamp-1">
-                    {item.caption}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Fullscreen Interactive Lightbox */}
+      {/* Lightbox Modal */}
       <GalleryLightbox
         item={activeLightboxItem}
         items={filteredItems}

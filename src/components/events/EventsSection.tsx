@@ -1,12 +1,22 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { weddingData, WeddingEvent } from "@/data/weddingData";
 import { Calendar, Clock, MapPin, Download, Sparkles, ExternalLink } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
 
 export default function EventsSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const card1Y = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const card2Y = useTransform(scrollYProgress, [0, 1], [-15, 25]);
+
   const downloadIcs = (event: WeddingEvent) => {
     const { calendarData } = event;
     const icsString = [
@@ -49,6 +59,7 @@ export default function EventsSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="events"
       className="relative py-28 sm:py-36 px-4 bg-sand-50/50 overflow-hidden"
     >
@@ -73,7 +84,7 @@ export default function EventsSection() {
           <FloralDivider variant="diamond" className="my-6" />
         </motion.div>
 
-        {/* 2 Event Cards with Individual Visual Identities */}
+        {/* 2 Event Cards with Individual Parallax Depth */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
           {weddingData.events.map((event, idx) => {
             const isEngagement = event.id === "engagement";
@@ -81,6 +92,7 @@ export default function EventsSection() {
             return (
               <motion.div
                 key={event.id}
+                style={{ y: isEngagement ? card1Y : card2Y }}
                 initial={{ opacity: 0, y: 35 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
@@ -108,69 +120,60 @@ export default function EventsSection() {
                       }`}
                     >
                       {isEngagement ? (
-                        <span className="text-3xl filter drop-shadow-sm">💍</span>
+                        <Sparkles className="w-8 h-8 text-champagne-600 animate-pulse" />
                       ) : (
-                        <span className="text-3xl filter drop-shadow-sm">🛕</span>
+                        <div className="text-2xl font-serif text-rosewood-700">🪔</div>
                       )}
                     </div>
 
                     <span
-                      className={`text-xs font-serif uppercase tracking-editorial px-3.5 py-1.5 rounded-full border font-semibold ${
+                      className={`px-4 py-1.5 rounded-full text-xs font-serif uppercase tracking-editorial font-semibold border ${
                         isEngagement
                           ? "bg-champagne-50 border-champagne-300 text-champagne-700"
                           : "bg-rosewood-50 border-rosewood-300 text-rosewood-700"
                       }`}
                     >
-                      {isEngagement ? "Ceremony I" : "Ceremony II"}
+                      {event.title}
                     </span>
                   </div>
 
                   {/* Title & Subtitle */}
                   <div>
                     <h3 className="font-heading text-3xl sm:text-4xl text-editorial font-medium">
-                      {event.title}
+                      {event.title} Ceremony
                     </h3>
-                    <p className="font-serif italic text-sm text-editorial-muted mt-1">
-                      {event.subTitle}
-                    </p>
+                    {event.subTitle && (
+                      <p className="font-serif italic text-sm text-editorial-muted mt-1">
+                        "{event.subTitle}"
+                      </p>
+                    )}
                   </div>
 
-                  {/* Date, Time & Venue Details */}
-                  <div className="space-y-4 pt-4 border-t border-champagne-200/60 font-serif">
-                    <div className="flex items-start gap-3.5">
-                      <Calendar className="w-5 h-5 text-champagne-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-base text-editorial">
-                          {event.dateFormatted}
-                        </p>
-                      </div>
+                  {/* Date & Time Badges */}
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center gap-3 text-sm font-serif text-editorial font-medium">
+                      <Calendar className="w-4 h-4 text-champagne-600 shrink-0" />
+                      <span>{event.dateFormatted}</span>
                     </div>
 
-                    <div className="flex items-start gap-3.5">
-                      <Clock className="w-5 h-5 text-champagne-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-base text-champagne-700">
-                          {event.timeFormatted}
-                        </p>
-                      </div>
+                    <div className="flex items-center gap-3 text-sm font-serif text-editorial font-medium">
+                      <Clock className="w-4 h-4 text-champagne-600 shrink-0" />
+                      <span className="font-semibold text-champagne-800">
+                        {event.timeFormatted}
+                      </span>
                     </div>
 
-                    <div className="flex items-start gap-3.5">
-                      <MapPin className="w-5 h-5 text-champagne-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-sm text-editorial">
-                          {event.venueName}
-                        </p>
-                        <p className="text-xs text-editorial-muted mt-0.5 leading-relaxed">
-                          {event.venueAddress}
-                        </p>
-                      </div>
+                    <div className="flex items-start gap-3 text-xs font-serif text-editorial-muted leading-relaxed">
+                      <MapPin className="w-4 h-4 text-champagne-600 shrink-0 mt-0.5" />
+                      <span>
+                        {event.venueName}, {event.venueAddress}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Add to Calendar Action Buttons */}
-                <div className="mt-8 pt-6 border-t border-champagne-200/60 flex flex-col sm:flex-row gap-3 relative z-10">
+                {/* Calendar Actions */}
+                <div className="pt-8 mt-6 border-t border-champagne-200/60 flex flex-col sm:flex-row gap-3 relative z-10">
                   <a
                     href={getGoogleCalendarUrl(event)}
                     target="_blank"
@@ -178,15 +181,15 @@ export default function EventsSection() {
                     className="flex-1 py-3 px-4 rounded-full bg-editorial hover:bg-black text-white text-xs font-serif uppercase tracking-editorial text-center flex items-center justify-center gap-2 shadow-sm transition-all"
                   >
                     <span>Google Calendar</span>
-                    <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                    <ExternalLink className="w-3.5 h-3.5 text-champagne-300" />
                   </a>
 
                   <button
                     onClick={() => downloadIcs(event)}
-                    className="flex-1 py-3 px-4 rounded-full bg-white hover:bg-champagne-50 text-editorial border border-champagne-300 text-xs font-serif uppercase tracking-editorial text-center flex items-center justify-center gap-2 shadow-sm transition-colors"
+                    className="py-3 px-4 rounded-full bg-white hover:bg-sand-100 text-editorial border border-champagne-300 text-xs font-serif uppercase tracking-editorial flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5 text-champagne-600" />
-                    <span>Download .ICS</span>
+                    <span>iCal / Outlook</span>
                   </button>
                 </div>
               </motion.div>

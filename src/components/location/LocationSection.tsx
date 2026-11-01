@@ -1,13 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { weddingData } from "@/data/weddingData";
 import { MapPin, Navigation, Copy, Check, Car, Compass } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
 
 export default function LocationSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [copied, setCopied] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const detailsY = useTransform(scrollYProgress, [0, 1], [25, -25]);
+  const mapY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(
@@ -19,6 +28,7 @@ export default function LocationSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="location"
       className="relative py-28 sm:py-36 px-4 bg-sand-50/50 overflow-hidden"
     >
@@ -43,10 +53,11 @@ export default function LocationSection() {
           <FloralDivider variant="heart" className="my-6" />
         </motion.div>
 
-        {/* Content & Map Grid */}
+        {/* Content & Map Grid with Opposing Parallax */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Venue Details (Left) */}
           <motion.div
+            style={{ y: detailsY }}
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -99,12 +110,12 @@ export default function LocationSection() {
 
               <button
                 onClick={handleCopy}
-                className="flex-1 py-3.5 px-5 rounded-full bg-white hover:bg-champagne-50 text-editorial border border-champagne-300 text-xs font-serif uppercase tracking-editorial text-center flex items-center justify-center gap-2 shadow-sm transition-colors"
+                className="py-3.5 px-5 rounded-full bg-white hover:bg-sand-100 text-editorial border border-champagne-300 text-xs font-serif uppercase tracking-editorial flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
               >
                 {copied ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-700 font-bold">Address Copied!</span>
+                    <span>Copied!</span>
                   </>
                 ) : (
                   <>
@@ -116,28 +127,33 @@ export default function LocationSection() {
             </div>
           </motion.div>
 
-          {/* Embedded Google Map (Right) */}
+          {/* Interactive Google Map Embed (Right) */}
           <motion.div
+            style={{ y: mapY }}
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.8 }}
-            className="lg:col-span-7 card-editorial rounded-3xl p-3 border border-champagne-300 shadow-luxury overflow-hidden flex flex-col"
+            className="lg:col-span-7 rounded-3xl overflow-hidden border border-champagne-300 shadow-luxury bg-white min-h-[380px] sm:min-h-[460px] relative group"
           >
-            <div className="w-full h-96 lg:h-full min-h-[400px] rounded-2xl overflow-hidden relative border border-champagne-200">
-              <iframe
-                title="Aaryan Thirumana Mahal Map Location"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                  weddingData.venue.name + " " + weddingData.venue.address
-                )}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={true}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full h-full"
-              />
+            <iframe
+              title="Aaryan Thirumana Mahal Location Map"
+              src={`https://maps.google.com/maps?q=${weddingData.venue.embedQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="absolute inset-0 w-full h-full filter saturate-[0.9] contrast-[1.05] group-hover:filter-none transition-all duration-500"
+            />
+
+            {/* Quick Map Overlay Pill */}
+            <div className="absolute top-4 left-4 z-10 pointer-events-none">
+              <span className="px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-champagne-300/80 shadow-sm text-[11px] font-serif uppercase tracking-editorial text-champagne-800 font-semibold flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-champagne-600" />
+                <span>Madurai, Tamil Nadu</span>
+              </span>
             </div>
           </motion.div>
         </div>

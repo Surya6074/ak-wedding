@@ -1,14 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { weddingData } from "@/data/weddingData";
 import { Heart, Sparkles } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
 import MonogramBadge from "../ui/MonogramBadge";
 
 export default function FooterSection() {
+  const footerRef = useRef<HTMLElement | null>(null);
   const [guestName, setGuestName] = useState<string | null>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const poetryY = useTransform(scrollYProgress, [0, 1], [25, -15]);
+  const auraScale = useTransform(scrollYProgress, [0, 1], [0.85, 1.25]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -32,9 +41,15 @@ export default function FooterSection() {
   }, []);
 
   return (
-    <footer className="relative py-24 sm:py-32 px-4 bg-editorial text-ivory-100 text-center overflow-hidden">
-      {/* Background warm radial aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-champagne-600/10 blur-3xl pointer-events-none" />
+    <footer
+      ref={footerRef}
+      className="relative py-24 sm:py-32 px-4 bg-editorial text-ivory-100 text-center overflow-hidden"
+    >
+      {/* Background warm radial aura with Parallax Scale */}
+      <motion.div
+        style={{ scale: auraScale }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-champagne-600/10 blur-3xl pointer-events-none"
+      />
 
       <div className="max-w-3xl mx-auto relative z-10 space-y-8">
         {/* Monogram Badge */}
@@ -66,8 +81,9 @@ export default function FooterSection() {
 
         <FloralDivider variant="heart" className="my-6 opacity-70" />
 
-        {/* Romantic Poetry Lines */}
+        {/* Romantic Poetry Lines with Parallax Elevation */}
         <motion.div
+          style={{ y: poetryY }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
