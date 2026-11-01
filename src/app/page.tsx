@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import OpeningCard from "@/components/card/OpeningCard";
 import HeroSection from "@/components/hero/HeroSection";
 import CountdownSection from "@/components/countdown/CountdownSection";
 import CoupleSection from "@/components/couple/CoupleSection";
@@ -15,6 +16,31 @@ import ScrollProgress from "@/components/ui/ScrollProgress";
 import AudioPlayer from "@/components/ui/AudioPlayer";
 
 export default function WeddingPage() {
+  const [isCardOpened, setIsCardOpened] = useState(false);
+  const [guestName, setGuestName] = useState<string | null>(null);
+
+  // Extract ?invite="Name" from URL query string
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const rawParam = params.get("invite") || params.get("guest") || params.get("to");
+      if (rawParam) {
+        const decoded = decodeURIComponent(rawParam);
+        const cleaned = decoded.replace(/^["']|["']$/g, "").trim();
+        if (cleaned) {
+          const capitalized = cleaned
+            .split(" ")
+            .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : ""))
+            .join(" ");
+          setGuestName(capitalized);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // Client-only dynamic initialization of Lenis smooth scroll
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -72,6 +98,14 @@ export default function WeddingPage() {
 
   return (
     <main className="relative min-h-screen bg-[#FAF7F2] text-[#2C2422] selection:bg-[#C5A059] selection:text-white overflow-x-hidden">
+      {/* 0. Initial Royal Message Card (Tap to Open Screen) */}
+      {!isCardOpened && (
+        <OpeningCard
+          onOpen={() => setIsCardOpened(true)}
+          guestName={guestName}
+        />
+      )}
+
       {/* 60fps Ambient Floating Petals & Gold Sparkles */}
       <FloatingPetals />
 

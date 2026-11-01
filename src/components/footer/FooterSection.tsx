@@ -1,13 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { weddingData } from "@/data/weddingData";
-import { Heart } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
 import MonogramBadge from "../ui/MonogramBadge";
 
 export default function FooterSection() {
+  const [guestName, setGuestName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const rawParam = params.get("invite") || params.get("guest") || params.get("to");
+      if (rawParam) {
+        const decoded = decodeURIComponent(rawParam);
+        const cleaned = decoded.replace(/^["']|["']$/g, "").trim();
+        if (cleaned) {
+          const capitalized = cleaned
+            .split(" ")
+            .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : ""))
+            .join(" ");
+          setGuestName(capitalized);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   return (
     <footer className="relative py-24 sm:py-32 px-4 bg-editorial text-ivory-100 text-center overflow-hidden">
       {/* Background warm radial aura */}
@@ -57,6 +80,21 @@ export default function FooterSection() {
             </p>
           ))}
         </motion.div>
+
+        {/* Personalized Guest Closing Message if ?invite= is passed */}
+        {guestName && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="pt-2"
+          >
+            <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/10 border border-champagne-400/40 text-champagne-200 text-xs sm:text-sm font-serif italic shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-champagne-400 animate-pulse" />
+              <span>Looking forward to celebrating with you, {guestName}!</span>
+            </div>
+          </motion.div>
+        )}
 
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs font-serif text-ivory-300/60 max-w-xl mx-auto gap-2">
           <span>Aravindh & Karthiga's Wedding Invitation</span>

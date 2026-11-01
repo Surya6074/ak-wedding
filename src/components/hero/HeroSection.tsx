@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { weddingData } from "@/data/weddingData";
 import MonogramBadge from "../ui/MonogramBadge";
@@ -9,6 +9,7 @@ import { ChevronDown, Sparkles } from "lucide-react";
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLElement | null>(null);
+  const [guestName, setGuestName] = useState<string | null>(null);
 
   // Parallax scroll transforms
   const { scrollYProgress } = useScroll({
@@ -20,11 +21,34 @@ export default function HeroSection() {
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "45%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  // Read ?invite="Name" or ?invite=Name from URL query params
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const rawParam = params.get("invite") || params.get("guest") || params.get("to");
+      if (rawParam) {
+        const decoded = decodeURIComponent(rawParam);
+        // Clean surrounding quotes e.g. ?invite="Surya" -> Surya
+        const cleaned = decoded.replace(/^["']|["']$/g, "").trim();
+        if (cleaned) {
+          const capitalized = cleaned
+            .split(" ")
+            .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : ""))
+            .join(" ");
+          setGuestName(capitalized);
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  }, []);
+
   return (
     <section
       ref={containerRef}
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-between px-4 pt-16 pb-12 overflow-hidden bg-editorial-grain"
+      className="relative min-h-screen flex flex-col items-center justify-between px-4 pt-12 sm:pt-16 pb-12 overflow-hidden bg-editorial-grain"
     >
       {/* Layered Parallax Background */}
       <motion.div
@@ -42,37 +66,79 @@ export default function HeroSection() {
       <div className="absolute bottom-8 left-8 w-16 h-16 border-b border-l border-champagne-400/40 pointer-events-none rounded-bl-xl hidden sm:block" />
       <div className="absolute bottom-8 right-8 w-16 h-16 border-b border-r border-champagne-400/40 pointer-events-none rounded-br-xl hidden sm:block" />
 
-      {/* Top Monogram Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="relative z-10 pt-2"
-      >
-        <MonogramBadge size={72} />
-      </motion.div>
+      {/* Top Container: Monogram & Personalized Guest Welcome Badge */}
+      <div className="relative z-10 flex flex-col items-center pt-2">
+        {/* Personalized Welcome Card if ?invite= is passed */}
+        {guestName && (
+          <motion.div
+            initial={{ opacity: 0, y: -15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="mb-4 px-6 py-3 rounded-2xl bg-white/95 border border-champagne-300 shadow-luxury backdrop-blur-md text-center max-w-sm sm:max-w-md mx-auto"
+          >
+            <div className="flex items-center justify-center gap-1.5 text-champagne-600 mb-0.5">
+              <Sparkles className="w-3.5 h-3.5 text-champagne-500 animate-pulse" />
+              <span className="font-serif uppercase tracking-editorial text-[10px] font-bold text-champagne-700">
+                Exclusive Invitation
+              </span>
+              <Sparkles className="w-3.5 h-3.5 text-champagne-500 animate-pulse" />
+            </div>
+            <h2 className="font-heading text-2xl sm:text-3xl text-editorial font-medium">
+              Welcome, {guestName}!
+            </h2>
+            <p className="font-serif italic text-xs text-editorial-muted mt-0.5">
+              We warmly invite you to join our celebrations
+            </p>
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
+          <MonogramBadge size={guestName ? 60 : 72} />
+        </motion.div>
+      </div>
 
       {/* Hero Content Container with smooth scroll parallax */}
       <motion.div
         style={{ y: textY, opacity }}
-        className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto py-6"
+        className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto py-4 sm:py-6"
       >
-        {/* Intro Subline */}
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2 }}
-          className="font-serif uppercase tracking-editorial text-xs sm:text-sm text-champagne-600 font-semibold mb-3"
-        >
-          {weddingData.hero.weddingDateHeadline}
-        </motion.p>
+        {/* Intro Subline / Personalized Greeting */}
+        {guestName ? (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2 }}
+            className="mb-3 max-w-lg mx-auto px-4"
+          >
+            <p className="font-serif italic text-sm sm:text-base text-champagne-700 leading-relaxed">
+              Together with our families, we cordially invite you,{" "}
+              <span className="font-serif font-bold text-editorial underline decoration-champagne-400 decoration-2 underline-offset-4">
+                {guestName}
+              </span>
+              , to celebrate the wedding of
+            </p>
+          </motion.div>
+        ) : (
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2 }}
+            className="font-serif uppercase tracking-editorial text-xs sm:text-sm text-champagne-600 font-semibold mb-3"
+          >
+            {weddingData.hero.weddingDateHeadline}
+          </motion.p>
+        )}
 
         {/* Couple's Names in Large Elegant Editorial Typography */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="my-3"
+          className="my-2 sm:my-3"
         >
           <h1 className="font-heading text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-editorial tracking-tight font-normal">
             {weddingData.groom.name}
@@ -89,7 +155,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <FloralDivider variant="heart" className="my-5" />
+          <FloralDivider variant="heart" className="my-4 sm:my-5" />
         </motion.div>
 
         {/* Main Tagline */}
