@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #FAF7F2;
+    --text-primary: #2C2422;
+    --gold-accent: #C5A059;
+    --gold-light: #F5E9D3;
+  }
+
+  html {
+    background-color: #FAF7F2;
+    color: #2C2422;
+  }
+}
+
+/* Subtle luxury textured background */
+.bg-editorial-grain {
+  background-color: #FAF7F2;
+  background-image: 
+    radial-gradient(rgba(197, 160, 89, 0.08) 1px, transparent 1px),
+    radial-gradient(rgba(44, 36, 34, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px, 64px 64px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Champagne Gold Text Gradient */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #8E6F34 0%, #C5A059 45%, #EBD5B0 75%, #8E6F34 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-light {
+  background: linear-gradient(135deg, #C5A059 0%, #FAF0DF 50%, #C5A059 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Luxury Card Glassmorphism */
+.card-editorial {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 160, 89, 0.22);
+  box-shadow: 0 20px 45px -15px rgba(44, 36, 34, 0.06);
+}
+
+.card-editorial-dark {
+  background: rgba(44, 36, 34, 0.94);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom Gold Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #CCA977, #C5A059, #8E6F34);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8E6F34;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

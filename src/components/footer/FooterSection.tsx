@@ -1,0 +1,71 @@
+"use client";
+
+import React from "react";
+import { motion } from "framer-motion";
+import { weddingData } from "@/data/weddingData";
+import { Heart } from "lucide-react";
+import FloralDivider from "../ui/FloralDivider";
+import MonogramBadge from "../ui/MonogramBadge";
+
+export default function FooterSection() {
+  return (
+    <footer className="relative py-24 sm:py-32 px-4 bg-editorial text-ivory-100 text-center overflow-hidden">
+      {/* Background warm radial aura */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-champagne-600/10 blur-3xl pointer-events-none" />
+
+      <div className="max-w-3xl mx-auto relative z-10 space-y-8">
+        {/* Monogram Badge */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="inline-block"
+        >
+          <MonogramBadge size={68} />
+        </motion.div>
+
+        {/* Couple Names */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="space-y-2"
+        >
+          <h2 className="font-heading text-4xl sm:text-6xl font-normal text-champagne-200">
+            {weddingData.groom.name} & {weddingData.bride.name}
+          </h2>
+          <p className="font-serif uppercase tracking-editorial text-xs sm:text-sm text-champagne-400 font-semibold">
+            {weddingData.footer.weddingDateTag}
+          </p>
+        </motion.div>
+
+        <FloralDivider variant="heart" className="my-6 opacity-70" />
+
+        {/* Romantic Poetry Lines */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.2 }}
+          className="space-y-2 font-serif italic text-lg sm:text-2xl text-ivory-100/90 max-w-xl mx-auto leading-relaxed"
+        >
+          {weddingData.footer.poemLines.map((line, idx) => (
+            <p key={idx} className="block">
+              "{line}"
+            </p>
+          ))}
+        </motion.div>
+
+        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs font-serif text-ivory-300/60 max-w-xl mx-auto gap-2">
+          <span>Aravindh & Karthiga's Wedding Invitation</span>
+          <div className="flex items-center gap-1.5">
+            <span>{weddingData.footer.madeWithLove}</span>
+            <Heart className="w-3.5 h-3.5 text-champagne-400 fill-champagne-400" />
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
