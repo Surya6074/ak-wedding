@@ -13,7 +13,7 @@ export default function KalashIcon({
   return (
     <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
       <Image
-        src="/kalash-logo.png"
+        src="./kalash-logo.png"
         alt="Sacred Mangala Kalasam"
         width={size}
         height={size}
