@@ -6,6 +6,7 @@ import { weddingData, WeddingEvent } from "@/data/weddingData";
 import { Calendar, Clock, MapPin, Download, Sparkles, ExternalLink } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
 import RingOfLove from "../ui/RingOfLove";
+import KalashIcon from "../ui/KalashIcon";
 
 export default function EventsSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -120,11 +121,18 @@ export default function EventsSection() {
                           : "bg-rosewood-100/80 border-rosewood-300"
                       }`}
                     >
-                      <RingOfLove
-                        variant={isEngagement ? "engagement" : "wedding"}
-                        className="w-10 h-10 transition-transform group-hover:scale-110 duration-300"
-                        size={40}
-                      />
+                      {isEngagement ? (
+                        <RingOfLove
+                          variant="engagement"
+                          className="w-10 h-10 transition-transform group-hover:scale-110 duration-300"
+                          size={40}
+                        />
+                      ) : (
+                        <KalashIcon
+                          className="w-11 h-11"
+                          size={44}
+                        />
+                      )}
                     </div>
 
                     <span
