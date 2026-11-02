@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { weddingData, WeddingEvent } from "@/data/weddingData";
 import { Calendar, Clock, MapPin, Download, Sparkles, ExternalLink } from "lucide-react";
 import FloralDivider from "../ui/FloralDivider";
+import RingOfLove from "../ui/RingOfLove";
 
 export default function EventsSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -115,15 +116,15 @@ export default function EventsSection() {
                     <div
                       className={`w-16 h-16 rounded-2xl flex items-center justify-center border shadow-sm transition-transform group-hover:scale-105 ${
                         isEngagement
-                          ? "bg-champagne-100/80 border-champagne-300 text-champagne-700"
-                          : "bg-rosewood-100/80 border-rosewood-300 text-rosewood-700"
+                          ? "bg-champagne-100/80 border-champagne-300"
+                          : "bg-rosewood-100/80 border-rosewood-300"
                       }`}
                     >
-                      {isEngagement ? (
-                        <Sparkles className="w-8 h-8 text-champagne-600 animate-pulse" />
-                      ) : (
-                        <div className="text-2xl font-serif text-rosewood-700">🪔</div>
-                      )}
+                      <RingOfLove
+                        variant={isEngagement ? "engagement" : "wedding"}
+                        className="w-10 h-10 transition-transform group-hover:scale-110 duration-300"
+                        size={40}
+                      />
                     </div>
 
                     <span
@@ -140,7 +141,7 @@ export default function EventsSection() {
                   {/* Title & Subtitle */}
                   <div>
                     <h3 className="font-heading text-3xl sm:text-4xl text-editorial font-medium">
-                      {event.title} Ceremony
+                      {event.title}
                     </h3>
                     {event.subTitle && (
                       <p className="font-serif italic text-sm text-editorial-muted mt-1">

@@ -132,7 +132,7 @@ export default function WeddingPage() {
       <EventsSection />
 
       {/* 5. Interactive Editorial Masonry Gallery (Fisher-Yates shuffled & Lightbox) */}
-      <GallerySection />
+      {/* <GallerySection /> */}
 
       {/* 6. Wedding Location & Directions */}
       <LocationSection />

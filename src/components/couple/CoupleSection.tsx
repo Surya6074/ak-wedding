@@ -14,9 +14,8 @@ export default function CoupleSection() {
     offset: ["start end", "end start"],
   });
 
-  // Parallax transforms for asymmetrical depth
-  const groomY = useTransform(scrollYProgress, [0, 1], [35, -35]);
-  const brideY = useTransform(scrollYProgress, [0, 1], [-15, 25]);
+  // Harmonized scroll parallax for level alignment
+  const cardsY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const heartScale = useTransform(scrollYProgress, [0.2, 0.5, 0.8], [0.85, 1.18, 0.95]);
   const bgFloatY = useTransform(scrollYProgress, [0, 1], [-40, 50]);
 
@@ -65,38 +64,46 @@ export default function CoupleSection() {
             <span className="font-script text-xl text-champagne-600 mt-2">Forever</span>
           </motion.div>
 
-          {/* GROOM COLUMN: Aravindh (with subtle scroll parallax) */}
+          {/* GROOM COLUMN: Aravindh */}
           <motion.div
-            style={{ y: groomY }}
+            style={{ y: cardsY }}
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center text-center space-y-6"
+            className="flex flex-col items-center text-center"
           >
             {/* Groom Portrait Frame */}
             <div className="relative group">
-              <div className="w-64 h-80 sm:w-72 sm:h-96 rounded-t-full rounded-b-2xl p-2 bg-gradient-to-b from-champagne-300 via-champagne-100 to-transparent shadow-luxury">
-                <div className="w-full h-full rounded-t-full rounded-b-xl bg-gradient-to-br from-[#EFE8DE] via-[#FAF7F2] to-[#E3D8CA] border border-white flex flex-col items-center justify-center p-6 text-center overflow-hidden relative group-hover:scale-[1.01] transition-transform duration-500">
+              <div className="w-72 sm:w-80 h-[380px] sm:h-[410px] rounded-t-full rounded-b-3xl p-1.5 sm:p-2 bg-gradient-to-b from-champagne-400 via-champagne-200 to-champagne-300 shadow-luxury flex flex-col">
+                <div className="w-full flex-1 rounded-t-full rounded-b-2xl bg-gradient-to-br from-[#EFE8DE] via-[#FAF7F2] to-[#E3D8CA] border border-white flex flex-col items-center justify-center p-5 sm:p-6 text-center overflow-hidden relative group-hover:scale-[1.01] transition-transform duration-500">
                   {/* Subtle Background Radial Pattern */}
                   <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#C5A059_1px,transparent_1px)] [background-size:16px_16px]" />
 
                   {/* Groom Vector Silhouette & Monogram */}
-                  <div className="w-20 h-20 rounded-full border border-champagne-400 bg-white/80 flex items-center justify-center mb-4 shadow-sm">
-                    <span className="font-heading text-3xl font-medium text-champagne-700">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-champagne-400 bg-white/90 flex items-center justify-center mb-2 shadow-sm shrink-0">
+                    <span className="font-heading text-3xl sm:text-4xl font-medium text-champagne-700">
                       {weddingData.groom.monogram}
                     </span>
                   </div>
 
-                  <span className="font-serif uppercase tracking-editorial text-[11px] text-champagne-700 font-semibold">
+                  <span className="font-serif uppercase tracking-editorial text-[10px] sm:text-xs text-champagne-700 font-semibold">
                     The Groom
                   </span>
-                  <span className="font-heading text-2xl text-editorial mt-1">
+                  <h3 className="font-heading text-2xl sm:text-3xl text-editorial font-medium mt-0.5 my-3">
                     {weddingData.groom.name}
-                  </span>
-                  <span className="text-xs font-serif text-editorial-muted italic mt-3 max-w-[200px] leading-relaxed">
-                    {weddingData.groom.bio}
-                  </span>
+                  </h3>
+
+                  {/* Parents Data inside the box */}
+                  <div className="my-2 px-3.5 py-1 rounded-full bg-champagne-100/80 border border-champagne-300/70 max-w-[240px]">
+                    <p className="font-serif text-xs sm:text-[13px] text-champagne-800 font-semibold">
+                      {weddingData.groom.parents}
+                    </p>
+                  </div>
+
+                  <p className="text-xs sm:text-[13px] font-serif text-editorial-muted italic mt-1 max-w-[220px] leading-relaxed">
+                    "{weddingData.groom.bio}"
+                  </p>
                 </div>
               </div>
 
@@ -104,66 +111,54 @@ export default function CoupleSection() {
               <div className="absolute -bottom-2 -left-2 text-champagne-400 text-xs">✧</div>
               <div className="absolute -bottom-2 -right-2 text-champagne-400 text-xs">✧</div>
             </div>
-
-            {/* Groom Details */}
-            <div className="space-y-2 max-w-sm">
-              <h3 className="font-heading text-3xl sm:text-4xl text-editorial font-medium">
-                {weddingData.groom.name}
-              </h3>
-              <p className="font-serif text-base text-champagne-700 font-semibold">
-                {weddingData.groom.parents}
-              </p>
-            </div>
           </motion.div>
 
-          {/* BRIDE COLUMN: Karthiga (with opposing scroll parallax) */}
+          {/* BRIDE COLUMN: Karthiga */}
           <motion.div
-            style={{ y: brideY }}
+            style={{ y: cardsY }}
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center text-center space-y-6"
+            className="flex flex-col items-center text-center"
           >
             {/* Bride Portrait Frame */}
             <div className="relative group">
-              <div className="w-64 h-80 sm:w-72 sm:h-96 rounded-t-full rounded-b-2xl p-2 bg-gradient-to-b from-rosewood-300 via-champagne-100 to-transparent shadow-luxury">
-                <div className="w-full h-full rounded-t-full rounded-b-xl bg-gradient-to-br from-[#FAF0EB] via-[#FAF7F2] to-[#EFE4DE] border border-white flex flex-col items-center justify-center p-6 text-center overflow-hidden relative group-hover:scale-[1.01] transition-transform duration-500">
+              <div className="w-72 sm:w-80 h-[380px] sm:h-[410px] rounded-t-full rounded-b-3xl p-1.5 sm:p-2 bg-gradient-to-b from-rosewood-400 via-rosewood-200 to-rosewood-300 shadow-luxury flex flex-col">
+                <div className="w-full flex-1 rounded-t-full rounded-b-2xl bg-gradient-to-br from-[#FAF0EB] via-[#FAF7F2] to-[#EFE4DE] border border-white flex flex-col items-center justify-center p-5 sm:p-6 text-center overflow-hidden relative group-hover:scale-[1.01] transition-transform duration-500">
                   {/* Subtle Background Radial Pattern */}
                   <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#8E6F34_1px,transparent_1px)] [background-size:16px_16px]" />
 
                   {/* Bride Vector Silhouette & Monogram */}
-                  <div className="w-20 h-20 rounded-full border border-rosewood-300 bg-white/80 flex items-center justify-center mb-4 shadow-sm">
-                    <span className="font-heading text-3xl font-medium text-rosewood-700">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-rosewood-300 bg-white/90 flex items-center justify-center mb-2 shadow-sm shrink-0">
+                    <span className="font-heading text-3xl sm:text-4xl font-medium text-rosewood-700">
                       {weddingData.bride.monogram}
                     </span>
                   </div>
 
-                  <span className="font-serif uppercase tracking-editorial text-[11px] text-rosewood-700 font-semibold">
+                  <span className="font-serif uppercase tracking-editorial text-[10px] sm:text-xs text-rosewood-700 font-semibold">
                     The Bride
                   </span>
-                  <span className="font-heading text-2xl text-editorial mt-1">
+                  <h3 className="font-heading text-2xl sm:text-3xl text-editorial font-medium mt-0.5 my-3">
                     {weddingData.bride.name}
-                  </span>
-                  <span className="text-xs font-serif text-editorial-muted italic mt-3 max-w-[200px] leading-relaxed">
-                    {weddingData.bride.bio}
-                  </span>
+                  </h3>
+
+                  {/* Parents Data inside the box */}
+                  <div className="my-2 px-3.5 py-1 rounded-full bg-rosewood-100/80 border border-rosewood-300/70 max-w-[240px]">
+                    <p className="font-serif text-xs sm:text-[13px] text-rosewood-800 font-semibold">
+                      {weddingData.bride.parents}
+                    </p>
+                  </div>
+
+                  <p className="text-xs sm:text-[13px] font-serif text-editorial-muted italic mt-1 max-w-[220px] leading-relaxed">
+                    "{weddingData.bride.bio}"
+                  </p>
                 </div>
               </div>
 
               {/* Decorative Corner Flairs */}
               <div className="absolute -bottom-2 -left-2 text-rosewood-400 text-xs">✧</div>
               <div className="absolute -bottom-2 -right-2 text-rosewood-400 text-xs">✧</div>
-            </div>
-
-            {/* Bride Details */}
-            <div className="space-y-2 max-w-sm">
-              <h3 className="font-heading text-3xl sm:text-4xl text-editorial font-medium">
-                {weddingData.bride.name}
-              </h3>
-              <p className="font-serif text-base text-rosewood-700 font-semibold">
-                {weddingData.bride.parents}
-              </p>
             </div>
           </motion.div>
         </div>
